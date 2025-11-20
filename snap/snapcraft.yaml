@@ -6,7 +6,7 @@ description: |
   A feature-rich, terminal-based implementation of the classic Klondike Solitaire game.
   Features include mouse support, double-click auto-move, and storing high scores.
 
-icon: icon.png
+icon: icon256.png
 base: core24
 grade: stable
 confinement: strict
