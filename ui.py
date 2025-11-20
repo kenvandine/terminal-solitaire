@@ -137,35 +137,35 @@ class Renderer:
 
         # Draw cursor highlight
         self.stdscr.addstr(cy + CARD_HEIGHT, cx, "^^^^^^^", self.CURSOR_PAIR)
+
+        # Draw Sidebar (Right side, starting x=60)
+        sidebar_x = 60
+        sidebar_y = 1
         
-        # Calculate bottom-most line used by Tableau + Cursor
-        max_y = 15 # Minimum height
-        for i in range(7):
-            col_len = len(game.tableau[i])
-            # Last card starts at: 7 + max(0, col_len - 1)
-            # Ends at: start + CARD_HEIGHT - 1
-            # Cursor highlight is at: start + CARD_HEIGHT
-            
-            last_card_y = 7 + max(0, col_len - 1)
-            cursor_y = last_card_y + CARD_HEIGHT
-            if cursor_y > max_y:
-                max_y = cursor_y
-        
-        # Add padding
-        info_y = max_y + 2
+        # Draw Score and Moves
+        self.stdscr.addstr(sidebar_y, sidebar_x, f"Score: {game.score}", curses.A_BOLD)
+        self.stdscr.addstr(sidebar_y + 1, sidebar_x, f"Moves: {game.moves}", curses.A_BOLD)
         
         # Draw Selection Info
         if selection:
-            self.stdscr.addstr(info_y, 2, f"Selected: {selection}", curses.A_BOLD)
+            self.stdscr.addstr(sidebar_y + 3, sidebar_x, "Selected:", curses.A_BOLD)
+            self.stdscr.addstr(sidebar_y + 4, sidebar_x, f"{selection}", curses.A_BOLD)
 
-        # Draw Score and Moves
-        self.stdscr.addstr(info_y, 40, f"Score: {game.score}", curses.A_BOLD)
-        self.stdscr.addstr(info_y, 60, f"Moves: {game.moves}", curses.A_BOLD)
-
-        # Draw Help Text
-        help_y = info_y + 2
-        self.stdscr.addstr(help_y, 2, "Controls:", curses.A_BOLD | curses.A_UNDERLINE)
-        self.stdscr.addstr(help_y + 1, 2, "Arrows: Move Cursor  Space/Enter: Select/Move/Deal  S: Auto-Stack  Q: Quit")
-        self.stdscr.addstr(help_y + 2, 2, "Double-Tap Space/Enter or Double-Click: Auto-Move Card")
+        # Draw Help Text (Compact)
+        help_y = sidebar_y + 6
+        self.stdscr.addstr(help_y, sidebar_x, "Controls:", curses.A_BOLD | curses.A_UNDERLINE)
+        
+        help_lines = [
+            "Arrows: Move",
+            "Space/Enter:",
+            " Select/Move",
+            "Double-Tap:",
+            " Auto-Move",
+            "S: Auto-Stack",
+            "Q: Quit"
+        ]
+        
+        for i, line in enumerate(help_lines):
+            self.stdscr.addstr(help_y + 1 + i, sidebar_x, line)
 
         self.stdscr.refresh()

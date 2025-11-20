@@ -43,6 +43,11 @@ def try_auto_move(game, row, col):
     return False
 
 def run_game(stdscr):
+    # Check terminal size
+    rows, cols = stdscr.getmaxyx()
+    if rows < 24 or cols < 80:
+        return f"Terminal too small! Required: 80x24. Current: {cols}x{rows}"
+
     game = SolitaireGame()
     renderer = Renderer(stdscr)
     score_manager = ScoreManager()
@@ -265,7 +270,9 @@ def run_game(stdscr):
                     return
 
 def main():
-    curses.wrapper(run_game)
+    result = curses.wrapper(run_game)
+    if result:
+        print(result)
 
 if __name__ == '__main__':
     main()
