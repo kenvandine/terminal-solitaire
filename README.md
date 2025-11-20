@@ -18,21 +18,20 @@ A feature-rich, terminal-based implementation of the classic Klondike Solitaire 
 ## Requirements
 
 -   Python 3.6+
--   A terminal with color support
+-   Terminal with minimum size of **80x24**
 
 ## Installation
 
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/terminal-solitaire.git
-    cd terminal-solitaire
-    ```
+Clone the repository:
 
-2.  No external dependencies are required beyond the standard Python library.
+```bash
+git clone https://github.com/yourusername/terminal-solitaire.git
+cd terminal-solitaire
+```
 
 ## How to Play
 
-Run the game using Python:
+Run the game:
 
 ```bash
 python3 solitaire.py
@@ -40,18 +39,16 @@ python3 solitaire.py
 
 ### Controls
 
-| Key / Action | Function |
-| :--- | :--- |
-| **Arrow Keys** | Move the cursor around the board. |
-| **Space** / **Enter** | Select a card/pile, move the selected card, or deal from Stock. |
-| **Double-Tap Space/Enter** | Automatically move the card under cursor to a Foundation or Tableau. |
-| **S** | Auto-move all eligible cards to Foundations. |
-| **Q** | Quit the game. |
-
-### Mouse Controls
-
--   **Click**: Select a card/pile or move the selected card. Click Stock to deal.
--   **Double-Click**: Automatically move the clicked card to a Foundation or Tableau.
+| Key | Action |
+| --- | --- |
+| **Arrow Keys** | Move cursor |
+| **Space / Enter** | Select card / Move card / Deal from Stock |
+| **Double-Tap Space/Enter** | Auto-move card to Foundation or Tableau |
+| **Double-Click Mouse** | Auto-move card / Deal from Stock |
+| **S** | Auto-stack all valid cards to Foundations |
+| **R** | Redeal (Start a new game) |
+| **Q** | Quit game |
+| **Mouse Click** | Select / Move / Deal |
 
 ## License
 

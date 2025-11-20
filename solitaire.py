@@ -253,6 +253,13 @@ def run_game(stdscr):
         elif key == ord('s'): # Auto-stack
             game.auto_move_to_foundation()
 
+        elif key == ord('r'): # Redeal
+            game = SolitaireGame()
+            selection = None
+            last_action_time = 0
+            cursor_row = 1
+            cursor_col = 0
+
         if game.check_win():
             # Draw one last time
             renderer.draw_game(game, (cursor_row, cursor_col), selection)

@@ -162,6 +162,7 @@ class Renderer:
             "Double-Tap:",
             " Auto-Move",
             "S: Auto-Stack",
+            "R: Redeal",
             "Q: Quit"
         ]
         
