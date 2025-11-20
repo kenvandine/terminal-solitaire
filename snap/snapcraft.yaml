@@ -1,10 +1,12 @@
 name: terminal-solitaire
 adopt-info: terminal-solitaire
+title: Terminal Solitaire
 summary: A terminal-based Klondike Solitaire game.
 description: |
   A feature-rich, terminal-based implementation of the classic Klondike Solitaire game.
   Features include mouse support, double-click auto-move, and storing high scores.
 
+icon: icon.png
 base: core24
 grade: stable
 confinement: strict
