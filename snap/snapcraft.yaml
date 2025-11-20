@@ -10,6 +10,11 @@ icon: icon.png
 base: core24
 grade: stable
 confinement: strict
+contact: https://github.com/kenvandine/terminal-solitaire/issues
+issues: https://github.com/kenvandine/terminal-solitaire/issues
+website: https://github.com/kenvandine/terminal-solitaire
+source-code: https://github.com/kenvandine/terminal-solitaire
+license: GPL-3.0
 
 apps:
   terminal-solitaire:
