@@ -1,18 +1,17 @@
 name: terminal-solitaire
-base: core24
-version: '1.0.0'
+adopt-info: terminal-solitaire
 summary: A terminal-based Klondike Solitaire game.
 description: |
   A feature-rich, terminal-based implementation of the classic Klondike Solitaire game.
-  Features include mouse support, double-click auto-move, and high scores.
+  Features include mouse support, double-click auto-move, and storing high scores.
 
+base: core24
 grade: stable
 confinement: strict
 
 apps:
   terminal-solitaire:
     command: bin/terminal-solitaire
-    plugs: [home]
 
 parts:
   terminal-solitaire:
@@ -20,3 +19,8 @@ parts:
     source: .
     python-packages:
       - setuptools
+    build-packages:
+      - git
+    override-pull: |
+      craftctl default
+      craftctl set version=$(git describe --tags --abbrev=10 || git rev-parse --short HEAD)
