@@ -159,13 +159,14 @@ class Renderer:
             self.stdscr.addstr(info_y, 2, f"Selected: {selection}", curses.A_BOLD)
 
         # Draw Score and Moves
-        self.stdscr.addstr(info_y, 40, f"Score: {game.score}", curses.A_BOLD)
-        self.stdscr.addstr(info_y, 60, f"Moves: {game.moves}", curses.A_BOLD)
+        self.stdscr.addstr(info_y, 15, f"Score: {game.score}", curses.A_BOLD)
+        self.stdscr.addstr(info_y, 35, f"Moves: {game.moves}", curses.A_BOLD)
 
         # Draw Help Text
         help_y = info_y + 2
         self.stdscr.addstr(help_y, 2, "Controls:", curses.A_BOLD | curses.A_UNDERLINE)
-        self.stdscr.addstr(help_y + 1, 2, "Arrows: Move Cursor  Space/Enter: Select/Move/Deal  S: Auto-Stack  Q: Quit")
-        self.stdscr.addstr(help_y + 2, 2, "Double-Tap Space/Enter or Double-Click: Auto-Move Card")
+        self.stdscr.addstr(help_y + 1, 3, "Arrows: Move Cursor  Space/Enter: Select/Move/Deal")
+        self.stdscr.addstr(help_y + 2, 3, "Double-Tap Space/Enter or Double-Click: Auto-Move Card")
+        self.stdscr.addstr(help_y + 3, 3, "S: Auto-Stack  U: Undo  Q: Quit")
 
         self.stdscr.refresh()
