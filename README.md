@@ -48,6 +48,7 @@ python3 solitaire.py
 | **S** | Auto-move all eligible cards to Foundations. |
 | **R** | Re-deal a new game. |
 | **U** | Undo the last action. |
+| **H** | View High Scores. |
 | **Q** | Quit the game. |
 
 ### Mouse Controls
