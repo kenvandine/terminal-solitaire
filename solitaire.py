@@ -85,14 +85,18 @@ def run_game(stdscr):
         
         # Handle Terminal Resize Event
         if key == curses.KEY_RESIZE:
-            # Curses automatically updates LINES and COLS,
-            # we just need to redraw the screen (which happens at the top of the loop)
-            # You might want to clear the screen explicitly to remove artifacts
             stdscr.clear()
             continue
 
         if key == ord('q'):
             break
+
+        # --- High Scores ---
+        elif key == ord('h') or key == ord('H'):
+            renderer.draw_high_scores(score_manager.get_high_scores())
+            # Clear screen upon return to ensure clean redraw of the game
+            stdscr.clear()
+        # -------------------
 
         # --- Undo Handling ---
         elif key == ord('u') or key == ord('U'):

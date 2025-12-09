@@ -62,9 +62,41 @@ class Renderer:
         self.stdscr.addstr(y + CARD_HEIGHT - 1, x + CARD_WIDTH - len(rank_str), rank_str, pair)
         self.stdscr.addstr(y + CARD_HEIGHT - 1, x, suit_str, pair)
 
+    def draw_high_scores(self, scores):
+        self.stdscr.clear()
+        h, w = self.stdscr.getmaxyx()
+
+        # Draw Title
+        title = "HIGH SCORES"
+        # Center vertically around the top third
+        start_y = max(1, h // 2 - 8)
+        self.stdscr.addstr(start_y, (w - len(title)) // 2, title, curses.A_BOLD | curses.A_UNDERLINE)
+
+        # Draw Header
+        header = f"{'Rank':<4} {'Score':<8} {'Moves':<8} {'Date':<20}"
+        start_x = max(0, (w - len(header)) // 2)
+        self.stdscr.addstr(start_y + 2, start_x, header, curses.A_BOLD)
+
+        # Draw Scores
+        if not scores:
+            no_scores = "No high scores yet!"
+            self.stdscr.addstr(start_y + 4, (w - len(no_scores)) // 2, no_scores)
+        else:
+            for i, entry in enumerate(scores):
+                # Format: 1.   100      50       2023-10-01...
+                line = f"{str(i+1) + '.':<4} {str(entry['score']):<8} {str(entry['moves']):<8} {entry['date']:<20}"
+                self.stdscr.addstr(start_y + 4 + i, start_x, line)
+
+        # Draw Return Prompt
+        prompt = "Press any key to return"
+        self.stdscr.addstr(h - 2, (w - len(prompt)) // 2, prompt, curses.A_BLINK)
+
+        self.stdscr.refresh()
+        self.stdscr.getch() # Wait for input
+
     def draw_game(self, game: SolitaireGame, cursor_pos, selection):
         self.stdscr.clear()
-        
+
         # Draw Stock (0, 0)
         stock_y, stock_x = 1, 2
         if game.stock:
@@ -98,24 +130,12 @@ class Renderer:
                 self.draw_card(t_y, t_x, None)
             else:
                 for j, card in enumerate(game.tableau[i]):
-                    # Stack cards
-                    card_y = t_y + j  # Overlap by 1 line? Or 2? Let's try 1 line overlap (compact)
-                    # Actually, if we want to see them, maybe 2 lines if face up?
-                    # Let's stick to 1 line vertical offset for now.
-                    
-                    # If it's the last card, draw full height.
-                    # If not, we might overwrite it with the next card.
-                    # So we should draw from top to bottom.
-                    self.draw_card(card_y, t_x, card)
+                    self.draw_card(t_y + j, t_x, card)
 
         # Draw Cursor
-        # cursor_pos = (row, col)
-        # row 0: Stock, Waste, Gap, F1, F2, F3, F4
-        # row 1: T1, T2, ... T7
-        
         c_row, c_col = cursor_pos
         cx, cy = 0, 0
-        
+
         if c_row == 0:
             if c_col == 0: # Stock
                 cx, cy = stock_x, stock_y
@@ -137,7 +157,7 @@ class Renderer:
 
         # Draw cursor highlight
         self.stdscr.addstr(cy + CARD_HEIGHT, cx, "^^^^^^^", self.CURSOR_PAIR)
-        
+
         # Calculate bottom-most line used by Tableau + Cursor
         max_y = 15 # Minimum height
         for i in range(7):
@@ -145,15 +165,14 @@ class Renderer:
             # Last card starts at: 7 + max(0, col_len - 1)
             # Ends at: start + CARD_HEIGHT - 1
             # Cursor highlight is at: start + CARD_HEIGHT
-            
             last_card_y = 7 + max(0, col_len - 1)
             cursor_y = last_card_y + CARD_HEIGHT
             if cursor_y > max_y:
                 max_y = cursor_y
-        
+
         # Add padding
         info_y = max_y + 2
-        
+
         # Draw Selection Info
         if selection:
             self.stdscr.addstr(info_y, 2, f"Selected: {selection}", curses.A_BOLD)
@@ -167,6 +186,7 @@ class Renderer:
         self.stdscr.addstr(help_y, 2, "Controls:", curses.A_BOLD | curses.A_UNDERLINE)
         self.stdscr.addstr(help_y + 1, 3, "Arrows: Move Cursor  Space/Enter: Select/Move/Deal")
         self.stdscr.addstr(help_y + 2, 3, "Double-Tap Space/Enter or Double-Click: Auto-Move Card")
-        self.stdscr.addstr(help_y + 3, 3, "S: Auto-Stack  U: Undo  Q: Quit")
+        # Updated Help Text including 'H'
+        self.stdscr.addstr(help_y + 3, 3, "S: Auto-Stack  H: High Scores  U: Undo  Q: Quit")
 
         self.stdscr.refresh()

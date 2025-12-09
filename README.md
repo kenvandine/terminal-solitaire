@@ -47,6 +47,7 @@ python3 solitaire.py
 | **Double-Tap Space/Enter** | Automatically move the card under cursor to a Foundation or Tableau. |
 | **S** | Auto-move all eligible cards to Foundations. |
 | **U** | Undo the last action. |
+| **H** | View High Scores. |
 | **Q** | Quit the game. |
 
 ### Mouse Controls

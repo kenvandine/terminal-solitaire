@@ -1,5 +1,11 @@
 import unittest
+import os
+import json
+import tempfile
+import shutil
+from unittest.mock import patch
 from game_logic import Card, Deck, SolitaireGame, Suit, Rank
+from scores import ScoreManager
 
 class TestSolitaireGame(unittest.TestCase):
     def setUp(self):
@@ -361,6 +367,55 @@ class TestSolitaireGame(unittest.TestCase):
         self.game.undo()
         self.assertEqual(len(self.game.waste), 1)
         self.assertEqual(self.game.waste[0].suit, Suit.HEARTS)
+
+class TestScoreManager(unittest.TestCase):
+    def setUp(self):
+        # Create a temporary directory
+        self.test_dir = tempfile.mkdtemp()
+        self.original_env = os.environ.get('SNAP_USER_DATA')
+        # Point the score manager to the temp directory via env var logic
+        os.environ['SNAP_USER_DATA'] = self.test_dir
+
+    def tearDown(self):
+        # Restore env and remove temp dir
+        if self.original_env:
+            os.environ['SNAP_USER_DATA'] = self.original_env
+        else:
+            del os.environ['SNAP_USER_DATA']
+        shutil.rmtree(self.test_dir)
+
+    def test_save_and_load_scores(self):
+        manager = ScoreManager()
+        # Save a score
+        manager.save_score(100, 50)
+
+        # Verify it loaded in memory
+        scores = manager.get_high_scores()
+        self.assertEqual(len(scores), 1)
+        self.assertEqual(scores[0]['score'], 100)
+        self.assertEqual(scores[0]['moves'], 50)
+
+        # Verify it persists to disk (reload)
+        new_manager = ScoreManager()
+        loaded_scores = new_manager.get_high_scores()
+        self.assertEqual(len(loaded_scores), 1)
+        self.assertEqual(loaded_scores[0]['score'], 100)
+
+    def test_score_sorting_and_limit(self):
+        manager = ScoreManager()
+        # Save 12 scores
+        for i in range(12):
+            manager.save_score(i * 10, i + 5)
+
+        scores = manager.get_high_scores()
+
+        # Should be limited to 10
+        self.assertEqual(len(scores), 10)
+
+        # Top score should be the highest (110)
+        self.assertEqual(scores[0]['score'], 110)
+        # Lowest in top 10 should be 20
+        self.assertEqual(scores[-1]['score'], 20)
 
 if __name__ == '__main__':
     unittest.main()
