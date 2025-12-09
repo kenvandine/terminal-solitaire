@@ -43,6 +43,28 @@ def try_auto_move(game, row, col):
     return False
 
 def run_game(stdscr):
+    # Minimum required dimensions
+    MIN_H, MIN_W = 26, 60
+
+    while True:
+        h, w = stdscr.getmaxyx()
+        if h >= MIN_H and w >= MIN_W:
+            break
+
+        stdscr.clear()
+        msg1 = f"Terminal is too small ({w}x{h})."
+        msg2 = f"Please resize to at least {MIN_W}x{MIN_H}."
+
+        # Center the text
+        stdscr.addstr(h // 2 - 1, max(0, (w - len(msg1)) // 2), msg1)
+        stdscr.addstr(h // 2, max(0, (w - len(msg2)) // 2), msg2)
+        stdscr.refresh()
+
+        # Wait for resize event or any key
+        key = stdscr.getch()
+        if key == curses.KEY_RESIZE:
+            curses.update_lines_cols() # Ensure curses knows about the new size
+
     game = SolitaireGame()
     renderer = Renderer(stdscr)
     score_manager = ScoreManager()
@@ -61,6 +83,14 @@ def run_game(stdscr):
         
         key = stdscr.getch()
         
+        # Handle Terminal Resize Event
+        if key == curses.KEY_RESIZE:
+            # Curses automatically updates LINES and COLS,
+            # we just need to redraw the screen (which happens at the top of the loop)
+            # You might want to clear the screen explicitly to remove artifacts
+            stdscr.clear()
+            continue
+
         if key == ord('q'):
             break
 
