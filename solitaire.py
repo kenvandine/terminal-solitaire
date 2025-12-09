@@ -44,7 +44,7 @@ def try_auto_move(game, row, col):
 
 def run_game(stdscr):
     # Minimum required dimensions
-    MIN_H, MIN_W = 26, 60
+    MIN_H, MIN_W = 40, 60
 
     while True:
         h, w = stdscr.getmaxyx()
