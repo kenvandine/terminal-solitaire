@@ -294,6 +294,27 @@ class TestSolitaireGame(unittest.TestCase):
         count = sum(len(f) for f in self.game.foundations)
         self.assertEqual(count, 2)
 
+    # --- Reset / Re-deal Tests ---
+    def test_reset_game(self):
+        """Test that resetting the game clears state and redeals"""
+        # Modify state
+        self.game.moves = 10
+        self.game.score = 50
+        self.game.history = [{'mock': 'state'}]
+
+        # Trigger reset
+        self.game.reset_game()
+
+        # Verify reset
+        self.assertEqual(self.game.moves, 0)
+        self.assertEqual(self.game.score, 0)
+        self.assertEqual(len(self.game.history), 0)
+
+        # Verify deck was redealt (full stock minus tableau cards)
+        # 52 cards total - 28 tableau cards = 24 stock cards
+        self.assertEqual(len(self.game.stock), 24)
+        self.assertEqual(len(self.game.waste), 0)
+
     def test_check_win(self):
         self.assertFalse(self.game.check_win())
         # Fill foundations artificially
