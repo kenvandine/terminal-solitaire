@@ -63,6 +63,12 @@ def run_game(stdscr):
         
         if key == ord('q'):
             break
+
+        # --- Undo Handling ---
+        elif key == ord('u') or key == ord('U'):
+            if game.undo():
+                selection = None # Reset selection to prevent state mismatches
+        # ---------------------
         
         elif key == curses.KEY_UP:
             if cursor_row == 1:
@@ -151,11 +157,6 @@ def run_game(stdscr):
                     selection = None
                     last_action_time = 0 # Reset to prevent triple-tap issues
                     continue
-                # If auto-move failed (e.g. Stock), fall through to normal action
-                # But we still want to update last_action_time? 
-                # Actually, if we fall through, we treat it as a new action.
-                # The last_action_time was already updated above.
-                # We just don't 'continue'.
 
             # Handle Stock Draw
             if cursor_row == 0 and cursor_col == 0:
@@ -201,21 +202,6 @@ def run_game(stdscr):
                 # Source: Tableau
                 elif src_row == 1:
                     if dst_row == 1: # To Tableau
-                        # So we default to: Move the entire face-up stack?
-                        # Or just the top card?
-                        # Let's try: Move the deepest valid sub-stack that allows the move.
-                        
-                        # Actually, let's just try to move 1 card first.
-                        # If that fails, we can't do much without depth selection.
-                        # But wait, if I have 7-6-5 and I want to move 5 to a 6 somewhere else, I can't.
-                        # I must move 5.
-                        # If I want to move 7-6-5 to an 8, I move the whole stack.
-                        
-                        # Let's implement a simple heuristic:
-                        # Try to move the whole face-up stack.
-                        # If not valid, try to move fewer?
-                        # No, usually you move the whole stack if you are moving to a different tableau.
-                        
                         src_pile = game.tableau[src_col]
                         # Find how many cards are face up
                         face_up_count = 0
@@ -227,10 +213,7 @@ def run_game(stdscr):
                         if game.move_tableau_to_tableau(src_col, dst_col, face_up_count):
                             success = True
                         else:
-                            # If that failed, maybe we only needed to move 1 card?
-                            # e.g. we have K-Q-J and we want to move J to Q.
-                            # But we tried to move K-Q-J to Q? That would fail.
-                            # So we should try moving 1 card.
+                            # Try moving 1 card
                             if face_up_count > 1:
                                 if game.move_tableau_to_tableau(src_col, dst_col, 1):
                                     success = True
@@ -241,8 +224,6 @@ def run_game(stdscr):
                 if success:
                     selection = None
                 else:
-                    # If move failed, deselect? Or keep selected?
-                    # Let's deselect to avoid confusion.
                     selection = None
 
         elif key == ord('s'): # Auto-stack

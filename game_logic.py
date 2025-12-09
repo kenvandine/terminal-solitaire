@@ -1,4 +1,5 @@
 import random
+import copy
 from enum import Enum
 from typing import List, Optional, Tuple
 
@@ -72,7 +73,31 @@ class SolitaireGame:
         self.waste: List[Card] = []
         self.score = 0
         self.moves = 0
+        self.history = []
         self.deal()
+
+    def save_state(self):
+        self.history.append({
+            'tableau': copy.deepcopy(self.tableau),
+            'foundations': copy.deepcopy(self.foundations),
+            'stock': copy.deepcopy(self.stock),
+            'waste': copy.deepcopy(self.waste),
+            'score': self.score,
+            'moves': self.moves
+        })
+
+    def undo(self) -> bool:
+        if not self.history:
+            return False
+
+        state = self.history.pop()
+        self.tableau = state['tableau']
+        self.foundations = state['foundations']
+        self.stock = state['stock']
+        self.waste = state['waste']
+        self.score = state['score']
+        self.moves = state['moves']
+        return True
 
     def deal(self):
         # Deal to tableau
@@ -90,7 +115,10 @@ class SolitaireGame:
                 break
             self.stock.append(card)
 
-    def draw_from_stock(self):
+    def draw_from_stock(self, record_undo=True):
+        if record_undo:
+            self.save_state()
+
         if not self.stock:
             # Recycle waste to stock
             if not self.waste:
@@ -128,7 +156,7 @@ class SolitaireGame:
     def check_win(self) -> bool:
         return all(len(f) == 13 for f in self.foundations)
 
-    def move_tableau_to_tableau(self, from_col: int, to_col: int, num_cards: int) -> bool:
+    def move_tableau_to_tableau(self, from_col: int, to_col: int, num_cards: int, record_undo=True) -> bool:
         if not (0 <= from_col < 7 and 0 <= to_col < 7):
             return False
         
@@ -140,6 +168,9 @@ class SolitaireGame:
         base_card = cards_to_move[0]
         
         if self.can_move_to_tableau(base_card, to_col):
+            if record_undo:
+                self.save_state()
+
             # Execute move
             self.tableau[from_col] = source_col[:-num_cards]
             self.tableau[to_col].extend(cards_to_move)
@@ -153,12 +184,15 @@ class SolitaireGame:
             return True
         return False
 
-    def move_waste_to_tableau(self, to_col: int) -> bool:
+    def move_waste_to_tableau(self, to_col: int, record_undo=True) -> bool:
         if not self.waste:
             return False
         
         card = self.waste[-1]
         if self.can_move_to_tableau(card, to_col):
+            if record_undo:
+                self.save_state()
+
             self.waste.pop()
             self.tableau[to_col].append(card)
             self.score += 5
@@ -166,12 +200,15 @@ class SolitaireGame:
             return True
         return False
 
-    def move_waste_to_foundation(self, f_idx: int) -> bool:
+    def move_waste_to_foundation(self, f_idx: int, record_undo=True) -> bool:
         if not self.waste:
             return False
         
         card = self.waste[-1]
         if self.can_move_to_foundation(card, f_idx):
+            if record_undo:
+                self.save_state()
+
             self.waste.pop()
             self.foundations[f_idx].append(card)
             self.score += 10
@@ -179,12 +216,15 @@ class SolitaireGame:
             return True
         return False
 
-    def move_tableau_to_foundation(self, from_col: int, f_idx: int) -> bool:
+    def move_tableau_to_foundation(self, from_col: int, f_idx: int, record_undo=True) -> bool:
         if not self.tableau[from_col]:
             return False
         
         card = self.tableau[from_col][-1]
         if self.can_move_to_foundation(card, f_idx):
+            if record_undo:
+                self.save_state()
+
             self.tableau[from_col].pop()
             self.foundations[f_idx].append(card)
             self.score += 10
@@ -198,12 +238,15 @@ class SolitaireGame:
             return True
         return False
 
-    def move_foundation_to_tableau(self, f_idx: int, to_col: int) -> bool:
+    def move_foundation_to_tableau(self, f_idx: int, to_col: int, record_undo=True) -> bool:
         if not self.foundations[f_idx]:
             return False
             
         card = self.foundations[f_idx][-1]
         if self.can_move_to_tableau(card, to_col):
+            if record_undo:
+                self.save_state()
+
             self.foundations[f_idx].pop()
             self.tableau[to_col].append(card)
             self.score = max(0, self.score - 15)
@@ -211,86 +254,15 @@ class SolitaireGame:
             return True
         return False
 
-    def check_win(self) -> bool:
-        return all(len(f) == 13 for f in self.foundations)
-
-    def move_tableau_to_tableau(self, from_col: int, to_col: int, num_cards: int) -> bool:
-        if not (0 <= from_col < 7 and 0 <= to_col < 7):
-            return False
-        
-        source_col = self.tableau[from_col]
-        if len(source_col) < num_cards:
-            return False
-        
-        cards_to_move = source_col[-num_cards:]
-        base_card = cards_to_move[0]
-        
-        if self.can_move_to_tableau(base_card, to_col):
-            # Execute move
-            self.tableau[from_col] = source_col[:-num_cards]
-            self.tableau[to_col].extend(cards_to_move)
-            
-            # Flip new top card of source if needed
-            if self.tableau[from_col] and not self.tableau[from_col][-1].face_up:
-                self.tableau[from_col][-1].show()
-            return True
-        return False
-
-    def move_waste_to_tableau(self, to_col: int) -> bool:
-        if not self.waste:
-            return False
-        
-        card = self.waste[-1]
-        if self.can_move_to_tableau(card, to_col):
-            self.waste.pop()
-            self.tableau[to_col].append(card)
-            return True
-        return False
-
-    def move_waste_to_foundation(self, f_idx: int) -> bool:
-        if not self.waste:
-            return False
-        
-        card = self.waste[-1]
-        if self.can_move_to_foundation(card, f_idx):
-            self.waste.pop()
-            self.foundations[f_idx].append(card)
-            return True
-        return False
-
-    def move_tableau_to_foundation(self, from_col: int, f_idx: int) -> bool:
-        if not self.tableau[from_col]:
-            return False
-        
-        card = self.tableau[from_col][-1]
-        if self.can_move_to_foundation(card, f_idx):
-            self.tableau[from_col].pop()
-            self.foundations[f_idx].append(card)
-            
-            # Flip new top card of source if needed
-            if self.tableau[from_col] and not self.tableau[from_col][-1].face_up:
-                self.tableau[from_col][-1].show()
-            return True
-        return False
-
-    def move_foundation_to_tableau(self, f_idx: int, to_col: int) -> bool:
-        if not self.foundations[f_idx]:
-            return False
-            
-        card = self.foundations[f_idx][-1]
-        if self.can_move_to_tableau(card, to_col):
-            self.foundations[f_idx].pop()
-            self.tableau[to_col].append(card)
-            return True
-        return False
-
     def auto_move_to_foundation(self) -> bool:
-        # Helper to auto-move obvious cards to foundation
+        # Save state once for the entire batch of auto-moves
+        self.save_state()
+
         moved = False
         # Check waste
         if self.waste:
             for i in range(4):
-                if self.move_waste_to_foundation(i):
+                if self.move_waste_to_foundation(i, record_undo=False):
                     moved = True
                     break
         
@@ -298,7 +270,12 @@ class SolitaireGame:
         for i in range(7):
             if self.tableau[i]:
                 for f in range(4):
-                    if self.move_tableau_to_foundation(i, f):
+                    if self.move_tableau_to_foundation(i, f, record_undo=False):
                         moved = True
                         break
+
+        # If no moves actually happened, remove the redundant state save
+        if not moved:
+            self.history.pop()
+
         return moved
