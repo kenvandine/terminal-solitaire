@@ -2,7 +2,7 @@
 
 A feature-rich, terminal-based implementation of the classic Klondike Solitaire game, written in Python using `curses`.
 
-![Solitaire](https://github.com/kenvandine/terminal-solitaire/screenshot.png)
+![Solitaire](https://github.com/kenvandine/terminal-solitaire/blob/main/screenshot.png)
 
 ## Features
 
@@ -66,7 +66,7 @@ python3 -m unittest test_game_logic.py
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 (GPL-3). See the [LICENSE](https://github.com/kenvandine/LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 (GPL-3). See the [LICENSE](https://github.com/kenvandine/terminal-solitaire/blob/main/LICENSE) file for details.
 
 ```
 ```
