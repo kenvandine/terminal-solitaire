@@ -186,7 +186,6 @@ class Renderer:
         self.stdscr.addstr(help_y, 2, "Controls:", curses.A_BOLD | curses.A_UNDERLINE)
         self.stdscr.addstr(help_y + 1, 3, "Arrows: Move Cursor  Space/Enter: Select/Move/Deal")
         self.stdscr.addstr(help_y + 2, 3, "Double-Tap Space/Enter or Double-Click: Auto-Move Card")
-        # Updated Help Text including 'H'
-        self.stdscr.addstr(help_y + 3, 3, "S: Auto-Stack  H: High Scores  U: Undo  Q: Quit")
+        self.stdscr.addstr(help_y + 3, 3, "S: Auto-Stack  U: Undo  R: Re-deal  H: High Scores  Q: Quit")
 
         self.stdscr.refresh()

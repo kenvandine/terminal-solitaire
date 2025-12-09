@@ -260,8 +260,16 @@ def run_game(stdscr):
                 else:
                     selection = None
 
-        elif key == ord('s'): # Auto-stack
+        elif key == ord('s') or key == ord('S'): # Auto-stack
             game.auto_move_to_foundation()
+
+        elif key == ord('r') or key == ord('R'): # Re-deal
+            game.reset_game()
+            selection = None
+            last_action_time = 0
+            # Reset cursor to starting position (optional, but good for UX)
+            cursor_row = 1
+            cursor_col = 0
 
         if game.check_win():
             # Draw one last time

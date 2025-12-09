@@ -76,6 +76,18 @@ class SolitaireGame:
         self.history = []
         self.deal()
 
+    def reset_game(self):
+        """Resets the game state for a new deal."""
+        self.deck = Deck()
+        self.tableau: List[List[Card]] = [[] for _ in range(7)]
+        self.foundations: List[List[Card]] = [[] for _ in range(4)]
+        self.stock: List[Card] = []
+        self.waste: List[Card] = []
+        self.score = 0
+        self.moves = 0
+        self.history = []
+        self.deal()
+
     def save_state(self):
         self.history.append({
             'tableau': copy.deepcopy(self.tableau),

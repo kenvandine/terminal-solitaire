@@ -46,6 +46,7 @@ python3 solitaire.py
 | **Space** / **Enter** | Select a card/pile, move the selected card, or deal from Stock. |
 | **Double-Tap Space/Enter** | Automatically move the card under cursor to a Foundation or Tableau. |
 | **S** | Auto-move all eligible cards to Foundations. |
+| **R** | Re-deal a new game. |
 | **U** | Undo the last action. |
 | **H** | View High Scores. |
 | **Q** | Quit the game. |
