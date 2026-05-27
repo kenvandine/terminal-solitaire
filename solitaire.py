@@ -44,7 +44,7 @@ def try_auto_move(game, row, col):
 
 def run_game(stdscr):
     # Minimum required dimensions
-    MIN_H, MIN_W = 40, 60
+    MIN_H, MIN_W = 24, 50
 
     while True:
         h, w = stdscr.getmaxyx()
@@ -85,6 +85,8 @@ def run_game(stdscr):
         
         # Handle Terminal Resize Event
         if key == curses.KEY_RESIZE:
+            curses.update_lines_cols()
+            renderer._update_layout()
             stdscr.clear()
             continue
 
@@ -135,34 +137,9 @@ def run_game(stdscr):
         elif key == curses.KEY_MOUSE:
             try:
                 _, mx, my, _, bstate = curses.getmouse()
-                
-                # Map coordinates to cursor_row, cursor_col
-                new_row, new_col = -1, -1
-                
-                # Top Row (Stock, Waste, Foundations)
-                if my >= 1 and my <= 5: # Card height is 5
-                    if 2 <= mx < 9: # Stock
-                        new_row, new_col = 0, 0
-                    elif 10 <= mx < 17: # Waste
-                        new_row, new_col = 0, 1
-                    elif mx >= 26: # Foundations
-                        # 26 + i*8
-                        f_idx = (mx - 26) // 8
-                        if 0 <= f_idx < 4:
-                            # Check if within card width
-                            offset = (mx - 26) % 8
-                            if offset < 7:
-                                new_row, new_col = 0, 3 + f_idx
-                
-                # Tableau
-                elif my >= 7:
-                    # 2 + i*8
-                    if mx >= 2:
-                        t_idx = (mx - 2) // 8
-                        if 0 <= t_idx < 7:
-                            offset = (mx - 2) % 8
-                            if offset < 7:
-                                new_row, new_col = 1, t_idx
+
+                # Map coordinates using dynamic layout
+                new_row, new_col = renderer.screen_to_cursor(my, mx)
                 
                 if new_row != -1 and new_col != -1:
                     cursor_row, cursor_col = new_row, new_col
